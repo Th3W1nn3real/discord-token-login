@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Discord Token Login",
+  "version": "1.0.0",
+  "description": "Accedi al tuo account Discord usando un token di accesso. Solo per uso personale / sviluppo.",
+  "permissions": ["scripting", "storage", "contextMenus"],
+  "host_permissions": [
+    "https://discord.com/*",
+    "https://*.discord.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Discord Token Login",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

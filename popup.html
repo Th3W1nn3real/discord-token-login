@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>Discord Token Login</title>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="logo">
+          <img src="icon.png" alt="" />
+          <div>
+            <h1>Token Login</h1>
+            <p>Multi-account per Discord</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="login">Accedi</button>
+        <button class="tab" data-tab="accounts">
+          Account salvati <span id="count" class="count">0</span>
+        </button>
+      </div>
+
+      <!-- LOGIN PANEL -->
+      <section id="panel-login" class="panel">
+        <label class="field-label" for="token">Token di accesso</label>
+        <textarea
+          id="token"
+          rows="3"
+          placeholder="Incolla qui il tuo token Discord..."
+          spellcheck="false"
+          autocomplete="off"
+        ></textarea>
+
+        <label class="field-label" for="nickname">Nome account (opzionale)</label>
+        <input
+          id="nickname"
+          type="text"
+          placeholder="es. Personale, Lavoro, Bot..."
+          maxlength="40"
+          autocomplete="off"
+        />
+
+        <div class="btn-row">
+          <button id="login" class="btn-primary">Accedi ora</button>
+          <button id="save" class="btn-secondary">Salva account</button>
+        </div>
+
+        <p id="status" class="status idle"></p>
+
+        <div class="hint">
+          «Salva account» memorizza il token con il nome scelto. I token salvati
+          sono mostrati <b>mascherati</b> ma <b>copiabili</b>, così puoi gestire
+          più account.
+        </div>
+      </section>
+
+      <!-- ACCOUNTS PANEL -->
+      <section id="panel-accounts" class="panel hidden">
+        <div class="list-header">
+          <span class="list-title">I tuoi account</span>
+          <button id="verify-all" class="verify-all hidden">↻ Verifica tutti</button>
+        </div>
+        <div id="accounts-list" class="accounts-list"></div>
+        <div id="empty" class="empty">
+          <div class="empty-icon">🗂️</div>
+          <p class="empty-title">Nessun account salvato</p>
+          <p class="empty-sub">
+            Vai in «Accedi», incolla un token, dagli un nome e premi
+            «Salva account».
+          </p>
+        </div>
+      </section>
+
+      <footer>
+        <a href="https://discord.com/app" target="_blank" rel="noreferrer">Apri Discord &#8599;</a>
+        <span class="dot">&middot;</span>
+        <span>Usa solo token di tua proprietà</span>
+      </footer>
+    </div>
+
+    <!-- INFO MODAL -->
+    <div id="modal" class="modal hidden">
+      <div id="modal-card" class="modal-card"></div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
