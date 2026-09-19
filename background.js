@@ -178,14 +178,14 @@ function rebuildContextMenus() {
     chrome.contextMenus.removeAll(() => {
       chrome.contextMenus.create({
         id: PARENT_ID,
-        title: "Discord: accedi come…",
+        title: "Discord: log in as…",
         contexts: ["all"],
       });
       if (accounts.length === 0) {
         chrome.contextMenus.create({
           id: "dtl-empty",
           parentId: PARENT_ID,
-          title: "(nessun account salvato)",
+          title: "(no saved accounts)",
           contexts: ["all"],
           enabled: false,
         });

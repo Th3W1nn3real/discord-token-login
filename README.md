@@ -1,76 +1,75 @@
-# Discord Token Login - Estensione Chrome (Manifest V3)
+# Discord Token Login - Chrome Extension (Manifest V3)
 
-Accedi al TUO account Discord incollando un token di accesso.
-Estensione open-source, completamente locale, nessuna raccolta dati.
+Log in to YOUR Discord account by pasting an access token.
+Open-source extension, fully local, no data collection.
 
-## Avviso - uso responsabile
+## Warning - responsible use
 
-- Usa SOLO token di account di tua proprietà.
-- Usare o condividere token altrui viola i Termini di Servizio di Discord
-  e può essere illegale.
-- Non incollare MAI il tuo token in strumenti di terze parti non verificati:
-  equivale a consegnare la password. Chi possiede il token ha accesso
-  completo all'account.
+- Use ONLY tokens from accounts you own.
+- Using or sharing someone else's tokens violates Discord's Terms of Service
+  and may be illegal.
+- NEVER paste your token into unverified third-party tools:
+  whoever owns the token has full access to the account.
 
-## Installazione (carica estensione non pacchettizzata)
+## Install (load unpacked)
 
-1. Scarica ed estrai lo ZIP (cartella "discord-token-login").
-2. Apri Chrome / Edge / Brave / Opera all'indirizzo:
+1. Download and extract the ZIP (folder "discord-token-login").
+2. Open Chrome / Edge / Brave / Opera at:
 
        chrome://extensions
 
-3. Attiva "Modalità sviluppatore" in alto a destra.
-4. Clicca "Carica non pacchettizzata" e seleziona la cartella estratta.
-5. Fissa l'icona dalla barra delle estensioni.
-6. Clicca l'icona, incolla il token e premi "Accedi".
+3. Enable "Developer mode" top right.
+4. Click "Load unpacked" and select the extracted folder.
+5. Pin the icon from the extensions toolbar.
+6. Click the icon, paste the token and press "Log in".
 
-## Come ottenere il tuo token (solo account tuo)
+## How to get your token (only your own account)
 
-Metodo DevTools (consigliato):
+DevTools method (recommended):
 
-1. Accedi a discord.com dal browser.
-2. Apri gli Strumenti per Sviluppatori (F12) -> scheda "Network".
-3. Trova una richiesta verso discord.com e cerca l'intestazione
-   "authorization". Il token è il valore di quell'intestazione
-   (SENZA la parola "Bearer").
+1. Log in to discord.com in the browser.
+2. Open Developer Tools (F12) -> "Network" tab.
+3. Find a request to discord.com and look for the
+   "authorization" header. The token is that header value
+   (WITHOUT the word "Bearer").
 
-Oppure: DevTools -> Application -> Local Storage -> chiave "token".
+Or: DevTools -> Application -> Local Storage -> "token" key.
 
-## Multi-account (account salvati)
+## Multi-account (saved accounts)
 
-L'estensione salva i token in locale (`chrome.storage.local`) associandoli a
-un nome (nickname), così puoi gestire più account:
+The extension saves tokens locally (`chrome.storage.local`) with
+a name (nickname), so you can manage multiple accounts:
 
-- All'apertura e al salvataggio, ogni token viene verificato via API Discord
-  (`/users/@me`) e viene mostrato **avatar, @chiocciola (handle) reale e un
-  badge di validità** (verde = valido, rosso = scaduto/invalido).
-- Pulsante **↻ Verifica tutti** per controllare tutti gli account in un colpo.
-- Pulsante **ℹ info** per ogni account: apre un pannello con tutte le info
-  recuperabili (email, 2FA, Nitro, lingua, data di creazione account ricavata
-  dall'ID, numero di server e membri, connessioni collegate, metodi di
-  pagamento e badge del profilo).
+- On open and on save, each token is verified via Discord API
+  (`/users/@me`) and shows **avatar, real @handle and a
+  validity badge** (green = valid, red = expired/invalid).
+- **Verify all** button to check all accounts at once.
+- **Info button** for each account: opens a panel with all
+  retrievable info (email, 2FA, Nitro, locale, account creation
+  date derived from ID, server count and members, linked
+  connections, payment methods and profile badges).
 
-## Menu contestuale (click destro)
+## Context menu (right click)
 
-Clic destro ovunque nella pagina → **"Discord: accendi come…"** → scegli un
-account dal sottomenu per fare il login istantaneo, senza aprire il popup.
-Il menu si aggiorna automaticamente quando aggiungi/rimuovi account.
+Right click anywhere on the page → **"Discord: log in as…"** → pick an
+account from the submenu for instant login, without opening the popup.
+The menu updates automatically when you add/remove accounts.
 
-1. Scheda **Accedi** → incolla il token, scrivi un nome (opzionale),
-   premi **Salva account**.
-2. Scheda **Account salvati** → per ogni account hai tre azioni:
-   - **➜ Accedi** → applica il token e ricarica Discord.
-   - **⧉ Copia** → copia il token completo negli appunti.
-   - **✕ Elimina** → rimuove l'account salvato.
+1. **Log in** tab → paste the token, type a name (optional),
+   press **Save account**.
+2. **Saved accounts** tab → for each account you have:
+   - **Login** → applies the token and reloads Discord.
+   - **Copy** → copies the full token to clipboard.
+   - **Delete** → removes the saved account.
 
-I token salvati sono mostrati **mascherati** (non in chiaro) ma sempre
-**copiabili**. I dati non lasciano mai il tuo browser.
+Saved tokens are shown **masked** (not in plain text) but always
+**copyable**. Data never leaves your browser.
 
-## File inclusi
+## Files included
 
-- manifest.json   - configurazione dell'estensione (MV3)
-- popup.html       - interfaccia del popup (con schede)
-- popup.css        - stile del popup
-- popup.js         - logica popup + multi-account + verifica token
-- background.js    - service worker: applica token, verifica API, menu contestuale
-- icon.png         - icona dell'estensione
+- manifest.json   - extension config (MV3)
+- popup.html       - popup UI (with tabs)
+- popup.css        - popup style
+- popup.js         - popup logic + multi-account + token verify
+- background.js    - service worker: apply token, API verify, context menu
+- icon.png         - extension icon

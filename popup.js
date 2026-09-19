@@ -17,9 +17,9 @@ let accounts = [];
 
 /* ------------------------------ decoders ------------------------------ */
 const PALETTE = ["#5865f2", "#3ba55d", "#eb459e", "#faa61a", "#ed4245", "#00b0f4", "#9b59b6"];
-const PREMIUM = { 0: "Nessuno", 1: "Nitro Classic", 2: "Nitro", 3: "Nitro Basic" };
+const PREMIUM = { 0: "None", 1: "Nitro Classic", 2: "Nitro", 3: "Nitro Basic" };
 const FLAG_BADGES = {
-  1: "Staff Discord",
+  1: "Discord Staff",
   2: "Partner",
   4: "HypeSquad Events",
   8: "Bug Hunter",
@@ -29,10 +29,10 @@ const FLAG_BADGES = {
   512: "Early Supporter",
   1024: "Team User",
   16384: "Bug Hunter Gold",
-  65536: "Bot Verificato",
-  131072: "Sviluppatore Verificato",
-  262144: "Moderatore Certificato",
-  4194304: "Sviluppatore Attivo",
+  65536: "Verified Bot",
+  131072: "Verified Developer",
+  262144: "Certified Moderator",
+  4194304: "Active Developer",
 };
 const CONN_LABELS = {
   twitch: "Twitch", youtube: "YouTube", spotify: "Spotify", steam: "Steam",
@@ -69,7 +69,7 @@ function createdAtFromId(id) {
 }
 function formatDate(d) {
   if (!d) return "—";
-  return d.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
+  return d.toLocaleDateString("en-US", { day: "2-digit", month: "long", year: "numeric" });
 }
 function toHex(n) {
   if (n == null) return null;
@@ -112,24 +112,24 @@ function persist() {
 /* ------------------------------- login -------------------------------- */
 function loginWithToken(token) {
   if (!token) {
-    setStatus("Incolla un token valido prima di continuare.", "err");
+    setStatus("Paste a valid token to continue.", "err");
     return;
   }
   if (token.length < 50) {
-    setStatus("Il token sembra troppo corto per essere valido.", "err");
+    setStatus("Token looks too short to be valid.", "err");
     return;
   }
-  setStatus("Apertura di Discord in corso...", "idle");
+  setStatus("Opening Discord...", "idle");
   chrome.runtime.sendMessage({ type: "LOGIN_WITH_TOKEN", token }, (resp) => {
     if (chrome.runtime.lastError) {
-      setStatus("Errore: " + chrome.runtime.lastError.message, "err");
+      setStatus("Error: " + chrome.runtime.lastError.message, "err");
       return;
     }
     if (resp && resp.ok) {
-      setStatus("Token applicato. Discord si sta ricaricando...", "ok");
+      setStatus("Token applied. Reloading Discord...", "ok");
       setTimeout(() => window.close(), 900);
     } else {
-      setStatus((resp && resp.error) || "Errore sconosciuto.", "err");
+      setStatus((resp && resp.error) || "Unknown error.", "err");
     }
   });
 }
@@ -160,9 +160,9 @@ function verifyAccount(id) {
   chrome.runtime.sendMessage({ type: "VERIFY_TOKEN", token: acc.token }, (resp) => {
     acc.checking = false;
     const ok = applyVerification(acc, resp);
-    if (!ok && resp && !resp.ok) setStatus("Verifica non riuscita (errore di rete).", "err");
-    else if (ok) setStatus(`«${label(acc)}» verificato ✓`, "ok");
-    else setStatus("Token non valido o scaduto.", "err");
+    if (!ok && resp && !resp.ok) setStatus("Verification failed (network error).", "err");
+    else if (ok) setStatus(`"${label(acc)}" verified ✓`, "ok");
+    else setStatus("Invalid or expired token.", "err");
     persist().then(render);
   });
 }
@@ -170,12 +170,12 @@ function verifyAccount(id) {
 function verifyAll() {
   const pending = accounts.filter((a) => !a.checking);
   if (pending.length === 0) return;
-  setStatus(`Verifica di ${pending.length} account in corso...`, "idle");
+  setStatus(`Verifying ${pending.length} account(s)...`, "idle");
   let i = 0;
   const next = () => {
     if (i >= pending.length) {
       persist().then(render);
-      setStatus("Verifica completata.", "ok");
+      setStatus("Verification complete.", "ok");
       return;
     }
     const acc = pending[i++];
@@ -194,8 +194,8 @@ function verifyAll() {
 /* --------------------------- saved accounts --------------------------- */
 function copyToken(token) {
   navigator.clipboard.writeText(token).then(
-    () => setStatus("Token completo copiato negli appunti.", "ok"),
-    () => setStatus("Impossibile copiare il token.", "err"),
+    () => setStatus("Full token copied to clipboard.", "ok"),
+    () => setStatus("Unable to copy token.", "err"),
   );
 }
 async function deleteAccount(id) {
@@ -203,7 +203,7 @@ async function deleteAccount(id) {
   accounts = accounts.filter((a) => a.id !== id);
   await persist();
   render();
-  setStatus(acc ? `Eliminato «${label(acc)}».` : "Account eliminato.", "idle");
+  setStatus(acc ? `Deleted "${label(acc)}".` : "Account deleted.", "idle");
 }
 
 function mkBtn(text, title, onClick, danger) {
@@ -253,14 +253,14 @@ function render() {
     else if (acc.verified === true) {
       badge.className += " ok";
       badge.textContent = "✓";
-      badge.title = "Token valido";
+      badge.title = "Valid token";
     } else if (acc.verified === false) {
       badge.className += " err";
       badge.textContent = "✕";
-      badge.title = "Token non valido / scaduto";
+      badge.title = "Invalid / expired token";
     } else {
       badge.className += " unknown";
-      badge.title = "Non ancora verificato";
+      badge.title = "Not verified yet";
     }
     avatar.appendChild(badge);
 
@@ -279,11 +279,11 @@ function render() {
     const actions = document.createElement("div");
     actions.className = "acc-actions";
     actions.append(
-      mkBtn("ℹ", "Mostra tutte le info", () => openInfo(acc.id)),
-      mkBtn("↻", "Verifica token", () => verifyAccount(acc.id)),
-      mkBtn("➜", "Accedi con questo account", () => loginWithToken(acc.token)),
-      mkBtn("⧉", "Copia token completo", () => copyToken(acc.token)),
-      mkBtn("✕", "Elimina account", () => deleteAccount(acc.id), true),
+      mkBtn("ℹ", "Show full info", () => openInfo(acc.id)),
+      mkBtn("↻", "Verify token", () => verifyAccount(acc.id)),
+      mkBtn("➜", "Log in with this account", () => loginWithToken(acc.token)),
+      mkBtn("⧉", "Copy full token", () => copyToken(acc.token)),
+      mkBtn("✕", "Delete account", () => deleteAccount(acc.id), true),
     );
 
     row.append(avatar, info, actions);
@@ -304,18 +304,18 @@ function openInfo(id) {
   const acc = accounts.find((a) => a.id === id);
   if (!acc) return;
   openModal();
-  modalCard.innerHTML = `<div class="modal-loading"><span class="spinner"></span><p>Recupero informazioni…</p></div>`;
+  modalCard.innerHTML = `<div class="modal-loading"><span class="spinner"></span><p>Loading info…</p></div>`;
 
   chrome.runtime.sendMessage({ type: "FETCH_FULL_INFO", token: acc.token }, (resp) => {
     if (chrome.runtime.lastError) {
-      modalCard.innerHTML = `<div class="modal-error">Errore: ${esc(chrome.runtime.lastError.message)}</div>`;
+      modalCard.innerHTML = `<div class="modal-error">Error: ${esc(chrome.runtime.lastError.message)}</div>`;
       return;
     }
     if (resp && resp.ok && resp.valid) renderInfo(resp, acc);
     else if (resp && resp.ok && !resp.valid)
-      modalCard.innerHTML = `<div class="modal-error">Questo token non è valido o è scaduto (HTTP ${esc(resp.status)}).</div>`;
+      modalCard.innerHTML = `<div class="modal-error">This token is invalid or expired (HTTP ${esc(resp.status)}).</div>`;
     else
-      modalCard.innerHTML = `<div class="modal-error">Impossibile recuperare le informazioni (${esc(resp && resp.error)}).</div>`;
+      modalCard.innerHTML = `<div class="modal-error">Unable to fetch info (${esc(resp && resp.error)}).</div>`;
   });
 }
 
@@ -342,13 +342,13 @@ function renderInfo(resp, acc) {
   const field = (k, v) =>
     `<div class="modal-field"><span class="k">${esc(k)}</span><span class="v">${v == null || v === "" ? "—" : esc(v)}</span></div>`;
 
-  const nitro = PREMIUM[u.premium_type] || "Nessuno";
-  const verifiedEmail = u.verified ? "Sì ✓" : "No";
-  const mfa = u.mfa_enabled ? "Attiva ✓" : "Disattivata";
+  const nitro = PREMIUM[u.premium_type] || "None";
+  const verifiedEmail = u.verified ? "Yes ✓" : "No";
+  const mfa = u.mfa_enabled ? "Enabled ✓" : "Disabled";
 
   let html = `
     <div class="modal-banner" style="${bannerStyle}">
-      <button class="modal-close" id="modal-close" title="Chiudi">✕</button>
+      <button class="modal-close" id="modal-close" title="Close">✕</button>
     </div>
     <div class="modal-body">
       ${avatarHtml}
@@ -358,29 +358,29 @@ function renderInfo(resp, acc) {
 
       <div class="modal-section-title">Account</div>
       <div class="modal-fields">
-        ${field("ID utente", u.id)}
+        ${field("User ID", u.id)}
         ${field("Email", u.email)}
-        ${field("Email verificata", verifiedEmail)}
+        ${field("Verified email", verifiedEmail)}
         ${field("2FA / MFA", mfa)}
         ${field("Nitro", nitro)}
-        ${field("Lingua", u.locale)}
-        ${field("Bot", u.bot ? "Sì" : "No")}
-        ${field("Creato il", formatDate(created))}
-        ${accent ? field("Colore accento", accent.toUpperCase()) : ""}
+        ${field("Language", u.locale)}
+        ${field("Bot", u.bot ? "Yes" : "No")}
+        ${field("Created at", formatDate(created))}
+        ${accent ? field("Accent color", accent.toUpperCase()) : ""}
       </div>`;
 
   if (guilds) {
     const totalMembers = guilds.reduce((s, g) => s + (g.approximate_member_count || 0), 0);
     html += `
-      <div class="modal-section-title">Server</div>
+      <div class="modal-section-title">Servers</div>
       <div class="modal-fields">
-        ${field("Numero di server", guilds.length)}
-        ${totalMembers ? field("Membri totali (circa)", totalMembers.toLocaleString("it-IT")) : ""}
+        ${field("Server count", guilds.length)}
+        ${totalMembers ? field("Total members (approx)", totalMembers.toLocaleString("en-US")) : ""}
       </div>`;
   }
 
   if (conns && conns.length) {
-    html += `<div class="modal-section-title">Connessioni (${conns.length})</div><div class="conn-list">`;
+    html += `<div class="modal-section-title">Connections (${conns.length})</div><div class="conn-list">`;
     conns.forEach((c) => {
       const t = CONN_LABELS[c.type] || c.type;
       html += `<div class="conn-item"><span>${esc(t)}</span><span class="v">${esc(c.name)}${c.verified ? " ✓" : ""}</span></div>`;
@@ -389,19 +389,19 @@ function renderInfo(resp, acc) {
   }
 
   if (billing && billing.length) {
-    const types = billing.map((b) => (b.type === 1 ? "Carta" : b.type === 2 ? "PayPal" : "Altro"));
+    const types = billing.map((b) => (b.type === 1 ? "Card" : b.type === 2 ? "PayPal" : "Other"));
     html += `
-      <div class="modal-section-title">Pagamenti</div>
-      <div class="modal-fields">${field("Metodi salvati", types.join(", "))}</div>`;
+      <div class="modal-section-title">Payments</div>
+      <div class="modal-fields">${field("Saved methods", types.join(", "))}</div>`;
   }
 
   if (flags.length) {
-    html += `<div class="modal-section-title">Badge</div><div class="modal-badges">`;
+    html += `<div class="modal-section-title">Badges</div><div class="modal-badges">`;
     flags.forEach((f) => (html += `<span class="badge-chip">${esc(f)}</span>`));
     html += `</div>`;
   }
 
-  html += `<button class="btn-primary modal-done" id="modal-done">Chiudi</button></div>`;
+  html += `<button class="btn-primary modal-done" id="modal-done">Close</button></div>`;
   modalCard.innerHTML = html;
 
   $("modal-close").onclick = closeModal;
@@ -421,11 +421,11 @@ document.addEventListener("keydown", (e) => {
 saveBtn.addEventListener("click", async () => {
   const token = sanitizeToken(tokenEl.value);
   if (!token) {
-    setStatus("Incolla prima un token da salvare.", "err");
+    setStatus("Paste a token to save first.", "err");
     return;
   }
   if (accounts.some((a) => a.token === token)) {
-    setStatus("Questo token è già presente tra gli account.", "err");
+    setStatus("This token is already saved.", "err");
     return;
   }
   const name = nicknameEl.value.trim() || `Account ${accounts.length + 1}`;
@@ -436,14 +436,14 @@ saveBtn.addEventListener("click", async () => {
 
   tokenEl.value = "";
   nicknameEl.value = "";
-  setStatus(`«${name}» salvato. Verifica in corso…`, "idle");
+  setStatus(`"${name}" saved. Verifying…`, "idle");
   showTab("accounts");
 
   chrome.runtime.sendMessage({ type: "VERIFY_TOKEN", token }, (resp) => {
     acc.checking = false;
-    if (applyVerification(acc, resp)) setStatus(`«${label(acc)}» verificato ✓`, "ok");
-    else if (resp && resp.ok && !resp.valid) setStatus("Token salvato, ma risulta non valido.", "err");
-    else setStatus("Token salvato (verifica non riuscita).", "idle");
+    if (applyVerification(acc, resp)) setStatus(`"${label(acc)}" verified ✓`, "ok");
+    else if (resp && resp.ok && !resp.valid) setStatus("Token saved, but it looks invalid.", "err");
+    else setStatus("Token saved (verification failed).", "idle");
     persist().then(render);
   });
 });

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Discord Token Login",
   "version": "1.0.0",
-  "description": "Accedi al tuo account Discord usando un token di accesso. Solo per uso personale / sviluppo.",
+  "description": "Log in to your Discord account using an access token. For personal / development use only.",
   "permissions": ["scripting", "storage", "contextMenus"],
   "host_permissions": [
     "https://discord.com/*",
